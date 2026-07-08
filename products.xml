@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<products>
+  <!--
+    Banco local de produtos por codigo de barras.
+    Para adicionar produtos, copie um bloco <product> e altere os valores.
+    O campo <price> usa ponto como separador decimal, exemplo: 7.49.
+    Use <pricingMode>unit</pricingMode> para preco unitario ou weight para preco por peso.
+  -->
+  <product>
+    <barcode>7891000100103</barcode>
+    <name>Leite Integral</name>
+    <brand>Italac</brand>
+    <unit>l</unit>
+    <quantity>1 l</quantity>
+    <pricingMode>unit</pricingMode>
+    <price>6.99</price>
+  </product>
+  <product>
+    <barcode>7896004000859</barcode>
+    <name>Arroz Branco Tipo 1</name>
+    <brand>Camil</brand>
+    <unit>kg</unit>
+    <quantity>5 kg</quantity>
+    <pricingMode>unit</pricingMode>
+    <price>29.90</price>
+  </product>
+  <product>
+    <barcode>7891910000197</barcode>
+    <name>Cafe Torrado e Moido</name>
+    <brand>3 Coracoes</brand>
+    <unit>g</unit>
+    <quantity>500 g</quantity>
+    <pricingMode>unit</pricingMode>
+    <price>18.99</price>
+  </product>
+</products>

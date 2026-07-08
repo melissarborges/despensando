@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DESPENSANDO</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Controle Suas Compras</p>
+          <h1>Despensando</h1>
+        </div>
+        <div class="top-actions">
+          <select id="currencySelect" aria-label="Moeda">
+            <option value="BRL">BRL</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+          <button class="icon-button" id="exportBtn" type="button" title="Exportar dados" aria-label="Exportar dados">⬇</button>
+          <label class="icon-button file-button" title="Importar dados" aria-label="Importar dados">
+            ⬆
+            <input id="importFile" type="file" accept="application/json" />
+          </label>
+        </div>
+      </header>
+
+      <main>
+        <section class="shopping-panel">
+          <div class="scanner">
+            <video id="cameraPreview" playsinline muted></video>
+            <div class="scanner-placeholder" id="scannerPlaceholder">
+              <strong>Leitor de código de barras</strong>
+              <span>Use a câmera ou digite o código manualmente.</span>
+            </div>
+          </div>
+
+          <div class="controls-grid">
+            <button id="scanBtn" type="button" class="primary-button">Escanear</button>
+            <button id="stopScanBtn" type="button">Parar</button>
+            <label class="barcode-field">
+              Código de barras
+              <input id="barcodeInput" inputmode="numeric" autocomplete="off" placeholder="7890000000000" />
+            </label>
+            <button id="lookupBtn" type="button">Usar código</button>
+            <p id="lookupStatus" class="lookup-status span-2" role="status" aria-live="polite"></p>
+          </div>
+
+          <form id="itemForm" class="item-form">
+            <input id="editingId" type="hidden" />
+            <label>
+              Produto
+              <input id="productName" required placeholder="Arroz, café, leite..." />
+            </label>
+            <label>
+              Marca
+              <input id="brandName" placeholder="Nome da marca" />
+            </label>
+            <label>
+              Mercado
+              <input id="storeName" placeholder="Nome do mercado" />
+            </label>
+            <label>
+              Quantidade
+              <input id="quantity" type="number" min="0.01" step="0.01" value="1" required />
+            </label>
+            <label>
+              Tipo de preço
+              <select id="pricingMode">
+                <option value="unit">Por unidade</option>
+                <option value="weight">Por peso</option>
+              </select>
+            </label>
+            <label>
+              Unidade
+              <select id="unit">
+                <option value="unit">unidade</option>
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="l">l</option>
+                <option value="ml">ml</option>
+                <option value="pack">pacote</option>
+              </select>
+            </label>
+            <label>
+              Preço unitário
+              <input id="unitPrice" type="number" min="0" step="0.01" required placeholder="0.00" />
+            </label>
+            <label class="weight-field">
+              Peso
+              <input id="weight" type="number" min="0" step="0.001" placeholder="0.000" />
+            </label>
+            <label class="weight-field">
+              Preço por peso
+              <input id="weightPrice" type="number" min="0" step="0.01" placeholder="0.00" />
+            </label>
+            <label>
+              Preço total
+              <input id="price" type="number" min="0" step="0.01" required readonly placeholder="0.00" />
+            </label>
+            <div class="lowest-price-card span-2" id="lowestPriceCard">
+              <span>Menor valor já registrado</span>
+              <strong id="lowestPriceValue">Sem histórico</strong>
+            </div>
+            <label>
+              Data
+              <input id="purchaseDate" type="date" />
+            </label>
+            <button class="primary-button span-2" type="submit">Adicione ao carrinho</button>
+          </form>
+        </section>
+
+        <section class="summary-strip" aria-label="Resumo da compra">
+          <div>
+            <span>Valor</span>
+            <strong id="currentTotal">$0.00</strong>
+          </div>
+          <div class="budget-card" id="budgetCard">
+            <label>
+              Orçamento
+              <input id="budgetInput" type="number" min="0" step="0.01" placeholder="0.00" />
+            </label>
+            <strong id="budgetStatus">Sem orçamento</strong>
+          </div>
+          <div>
+            <span>Itens</span>
+            <strong id="itemCount">0</strong>
+          </div>
+          <div>
+            <span>Comparado à última compra</span>
+            <strong id="comparisonTotal">Sem histórico</strong>
+          </div>
+        </section>
+
+        <section class="workspace">
+          <div class="list-panel">
+            <div class="section-heading">
+              <h2>Compra atual</h2>
+              <button id="finishShoppingBtn" type="button">Salvar compra</button>
+            </div>
+            <div id="currentList" class="item-list empty-state"></div>
+          </div>
+
+          <aside class="records-panel">
+            <div class="tabs" role="tablist" aria-label="Registros de compras">
+              <button id="historyTab" class="tab-button is-active" type="button" role="tab" aria-controls="historyPanel" aria-selected="true">
+                Histórico de preços
+              </button>
+              <button id="comparisonTab" class="tab-button" type="button" role="tab" aria-controls="comparisonPanel" aria-selected="false">
+                Comparações de compras
+              </button>
+            </div>
+
+            <div id="historyPanel" class="tab-panel" role="tabpanel" aria-labelledby="historyTab">
+              <div class="section-heading">
+                <h2>Histórico de preços</h2>
+                <select id="historyFilter" aria-label="Filtrar histórico de preços">
+                  <option value="">Todos os produtos</option>
+                </select>
+              </div>
+              <div id="historyList" class="history-list empty-state"></div>
+            </div>
+
+            <div id="comparisonPanel" class="tab-panel" role="tabpanel" aria-labelledby="comparisonTab" hidden>
+              <div class="section-heading">
+                <h2>Comparações de compras</h2>
+                <button id="clearDataBtn" type="button" class="danger-button">Limpar dados</button>
+              </div>
+              <div id="comparisonList" class="comparison-list empty-state"></div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
