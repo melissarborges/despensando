@@ -236,12 +236,23 @@ async function selectBarcode(barcode) {
 async function recognizeProduct(barcode) {
   page.setLookupLoading(true);
   page.setLookupStatus("Consultando produto no banco XML...");
+  const productNameBeforeLookup = els.productName.value;
+  const brandNameBeforeLookup = els.brandName.value;
 
   try {
     const recognized = await findProductInXmlDatabase(barcode);
 
     if (!recognized) {
       page.setLookupStatus("Produto não encontrado no XML. Digite o nome manualmente ou cadastre no products.xml.", "warning");
+      return;
+    }
+
+    const userChangedProductWhileLoading =
+      els.productName.value !== productNameBeforeLookup ||
+      els.brandName.value !== brandNameBeforeLookup;
+
+    if (userChangedProductWhileLoading && (els.productName.value || els.brandName.value)) {
+      page.setLookupStatus("Consulta concluída. Mantive os dados que você digitou.", "success");
       return;
     }
 
@@ -445,7 +456,9 @@ function renderSummary() {
 
   els.currentTotal.textContent = money.format(currentTotal);
   els.itemCount.textContent = state.current.length;
-  els.budgetInput.value = budget || "";
+  if (document.activeElement !== els.budgetInput) {
+    els.budgetInput.value = budget || "";
+  }
   els.budgetStatus.textContent = budget
     ? budgetStatusText(currentTotal, budget)
     : "Sem orçamento";
