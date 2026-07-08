@@ -31,7 +31,8 @@ els.unitPrice.addEventListener("input", page.syncPriceFields);
 els.weight.addEventListener("input", page.syncPriceFields);
 els.weightPrice.addEventListener("input", page.syncPriceFields);
 els.barcodeInput.addEventListener("input", updateLowestPrice);
-els.productName.addEventListener("input", updateLowestPrice);
+els.productName.addEventListener("change", updateLowestPrice);
+els.productName.addEventListener("blur", updateLowestPrice);
 els.budgetInput.addEventListener("input", updateBudget);
 els.currencySelect.addEventListener("change", () => {
   state.currency = els.currencySelect.value;
@@ -241,7 +242,6 @@ async function recognizeProduct(barcode) {
 
     if (!recognized) {
       page.setLookupStatus("Produto não encontrado no XML. Digite o nome manualmente ou cadastre no products.xml.", "warning");
-      page.setKnownProduct(null);
       return;
     }
 
@@ -805,15 +805,14 @@ function GroceryPageObject() {
   }
 
   function setKnownProduct(knownProduct) {
-    if (knownProduct) {
-      elements.productName.value = knownProduct.name;
-      elements.brandName.value = knownProduct.brand || "";
-      elements.unit.value = knownProduct.unit;
-      elements.storeName.value = knownProduct.lastStore || "";
-    } else {
-      elements.productName.value = "";
-      elements.brandName.value = "";
+    if (!knownProduct) {
+      return;
     }
+
+    elements.productName.value = knownProduct.name;
+    elements.brandName.value = knownProduct.brand || "";
+    elements.unit.value = knownProduct.unit;
+    elements.storeName.value = knownProduct.lastStore || "";
     elements.productName.focus();
   }
 
