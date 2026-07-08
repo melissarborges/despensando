@@ -14,6 +14,7 @@ const PRODUCT_APIS = [
 const state = loadState();
 let stream = null;
 let scannerTimer = null;
+let scannerControls = null;
 let money = createMoneyFormatter();
 let activeRecordsTab = "history";
 let xmlProductsCache = null;
@@ -81,39 +82,39 @@ function persist() {
 }
 
 async function startScanner() {
-  if (!("BarcodeDetector" in window)) {
-    page.setLookupStatus("Este navegador não suporta leitura automática. Digite o código manualmente.", "warning");
-    els.barcodeInput.focus();
+  if (!isZxingAvailable()) {
+    page.setLookupStatus("O leitor da câmera não carregou. Verifique sua internet e recarregue a página.", "warning");
     return;
   }
 
   if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
-    page.setLookupStatus("A câmera ao vivo precisa de HTTPS. No celular, use Foto do código ou digite o código.", "warning");
+    page.setLookupStatus("A câmera no celular precisa de HTTPS. Abra o app pelo GitHub Pages ou outro endereço https.", "warning");
     return;
   }
 
   try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-      audio: false,
-    });
-    els.video.srcObject = stream;
-    await els.video.play();
     page.setCameraActive(true);
+    page.setLookupStatus("Aponte a câmera para o código de barras...");
 
-    const detector = new BarcodeDetector({
-      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"],
-    });
+    const Reader = getZxingReader();
+    const reader = new Reader();
+    scannerControls = await reader.decodeFromVideoDevice(
+      undefined,
+      els.video,
+      async (result) => {
+        if (!result) {
+          return;
+        }
 
-    scannerTimer = window.setInterval(async () => {
-      const codes = await detector.detect(els.video);
-      if (codes.length) {
-        selectBarcode(codes[0].rawValue);
-        stopScanner();
+        const barcode = barcodeResultText(result);
+        if (barcode) {
+          stopScanner();
+          await selectBarcode(barcode);
+        }
       }
-    }, 650);
+    );
   } catch (error) {
-    page.setLookupStatus("A câmera não foi liberada. Use Foto do código ou digite o código manualmente.", "warning");
+    page.setLookupStatus("A câmera não foi liberada. Verifique a permissão do navegador e use HTTPS.", "warning");
     stopScanner();
   }
 }
@@ -124,7 +125,7 @@ async function scanBarcodePhoto(event) {
     return;
   }
 
-  if (!("BarcodeDetector" in window)) {
+  if (!isZxingAvailable() && !("BarcodeDetector" in window)) {
     page.setLookupStatus("Este navegador não suporta leitura automática por foto. Digite o código manualmente.", "warning");
     event.target.value = "";
     return;
@@ -134,19 +135,13 @@ async function scanBarcodePhoto(event) {
   page.setLookupStatus("Lendo código de barras pela foto...");
 
   try {
-    const imageSource = await imageSourceFromFile(file);
-    const detector = new BarcodeDetector({
-      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"],
-    });
-    const codes = await detector.detect(imageSource);
-    imageSource.close?.();
-
-    if (!codes.length) {
+    const barcode = await decodeBarcodeFromImageFile(file);
+    if (!barcode) {
       page.setLookupStatus("Não encontrei código na foto. Tente aproximar e iluminar melhor.", "warning");
       return;
     }
 
-    await selectBarcode(codes[0].rawValue);
+    await selectBarcode(barcode);
   } catch {
     page.setLookupStatus("Não foi possível ler a foto. Digite o código manualmente.", "warning");
   } finally {
@@ -155,11 +150,25 @@ async function scanBarcodePhoto(event) {
   }
 }
 
-async function imageSourceFromFile(file) {
-  if ("createImageBitmap" in window) {
-    return createImageBitmap(file);
+async function decodeBarcodeFromImageFile(file) {
+  if (isZxingAvailable()) {
+    const image = await imageElementFromFile(file);
+    const Reader = getZxingReader();
+    const reader = new Reader();
+    const result = await reader.decodeFromImageElement(image);
+    return barcodeResultText(result);
   }
 
+  const imageSource = await imageBitmapFromFile(file);
+  const detector = new BarcodeDetector({
+    formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"],
+  });
+  const codes = await detector.detect(imageSource);
+  imageSource.close?.();
+  return codes[0]?.rawValue || "";
+}
+
+function imageElementFromFile(file) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     const url = URL.createObjectURL(file);
@@ -175,7 +184,32 @@ async function imageSourceFromFile(file) {
   });
 }
 
+async function imageBitmapFromFile(file) {
+  if ("createImageBitmap" in window) {
+    return createImageBitmap(file);
+  }
+
+  return imageElementFromFile(file);
+}
+
+function isZxingAvailable() {
+  return Boolean(getZxingReader());
+}
+
+function getZxingReader() {
+  return window.ZXingBrowser?.BrowserMultiFormatReader || window.ZXing?.BrowserMultiFormatReader;
+}
+
+function barcodeResultText(result) {
+  return result?.getText?.() || result?.text || "";
+}
+
 function stopScanner() {
+  if (scannerControls) {
+    scannerControls.stop();
+    scannerControls = null;
+  }
+
   if (scannerTimer) {
     window.clearInterval(scannerTimer);
     scannerTimer = null;
