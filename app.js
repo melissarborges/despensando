@@ -24,6 +24,7 @@ page.setInitialValues(state.currency);
 
 els.scanBtn.addEventListener("click", startScanner);
 els.stopScanBtn.addEventListener("click", stopScanner);
+els.barcodePhotoInput.addEventListener("change", scanBarcodePhoto);
 els.lookupBtn.addEventListener("click", () => selectBarcode(els.barcodeInput.value.trim()));
 els.form.addEventListener("submit", saveItem);
 els.finishShoppingBtn.addEventListener("click", finishShopping);
@@ -81,7 +82,13 @@ function persist() {
 
 async function startScanner() {
   if (!("BarcodeDetector" in window)) {
-    alert("This browser does not support camera barcode scanning. You can still type the barcode.");
+    page.setLookupStatus("Este navegador não suporta leitura automática. Digite o código manualmente.", "warning");
+    els.barcodeInput.focus();
+    return;
+  }
+
+  if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+    page.setLookupStatus("A câmera ao vivo precisa de HTTPS. No celular, use Foto do código ou digite o código.", "warning");
     return;
   }
 
@@ -106,9 +113,66 @@ async function startScanner() {
       }
     }, 650);
   } catch (error) {
-    alert("Camera access was not available. You can still enter the barcode manually.");
+    page.setLookupStatus("A câmera não foi liberada. Use Foto do código ou digite o código manualmente.", "warning");
     stopScanner();
   }
+}
+
+async function scanBarcodePhoto(event) {
+  const [file] = event.target.files;
+  if (!file) {
+    return;
+  }
+
+  if (!("BarcodeDetector" in window)) {
+    page.setLookupStatus("Este navegador não suporta leitura automática por foto. Digite o código manualmente.", "warning");
+    event.target.value = "";
+    return;
+  }
+
+  page.setLookupLoading(true);
+  page.setLookupStatus("Lendo código de barras pela foto...");
+
+  try {
+    const imageSource = await imageSourceFromFile(file);
+    const detector = new BarcodeDetector({
+      formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128"],
+    });
+    const codes = await detector.detect(imageSource);
+    imageSource.close?.();
+
+    if (!codes.length) {
+      page.setLookupStatus("Não encontrei código na foto. Tente aproximar e iluminar melhor.", "warning");
+      return;
+    }
+
+    await selectBarcode(codes[0].rawValue);
+  } catch {
+    page.setLookupStatus("Não foi possível ler a foto. Digite o código manualmente.", "warning");
+  } finally {
+    page.setLookupLoading(false);
+    event.target.value = "";
+  }
+}
+
+async function imageSourceFromFile(file) {
+  if ("createImageBitmap" in window) {
+    return createImageBitmap(file);
+  }
+
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Image could not be loaded."));
+    };
+    image.src = url;
+  });
 }
 
 function stopScanner() {
@@ -656,6 +720,7 @@ function GroceryPageObject() {
     placeholder: document.querySelector("#scannerPlaceholder"),
     scanBtn: document.querySelector("#scanBtn"),
     stopScanBtn: document.querySelector("#stopScanBtn"),
+    barcodePhotoInput: document.querySelector("#barcodePhotoInput"),
     barcodeInput: document.querySelector("#barcodeInput"),
     lookupBtn: document.querySelector("#lookupBtn"),
     lookupStatus: document.querySelector("#lookupStatus"),

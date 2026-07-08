@@ -226,7 +226,8 @@ video {
 }
 
 .controls-grid button,
-.controls-grid input {
+.controls-grid input,
+.photo-scan-button {
   min-height: 52px;
 }
 
@@ -273,6 +274,28 @@ video {
   border-color: #aa1c41;
   background: #aa1c41;
   color: var(--cream);
+}
+
+.photo-scan-button {
+  display: grid;
+  grid-column: 1 / -1;
+  place-items: center;
+  justify-self: center;
+  width: min(100%, 390px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.photo-scan-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .span-2 {

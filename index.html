@@ -40,6 +40,10 @@
           <div class="controls-grid">
             <button id="scanBtn" type="button" class="primary-button">Escanear</button>
             <button id="stopScanBtn" type="button">Parar</button>
+            <label class="photo-scan-button">
+              Foto do código
+              <input id="barcodePhotoInput" type="file" accept="image/*" capture="environment" />
+            </label>
             <label class="barcode-field">
               Código de barras
               <input id="barcodeInput" inputmode="numeric" autocomplete="off" placeholder="7890000000000" />
