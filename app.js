@@ -1,15 +1,5 @@
 const STORAGE_KEY = "grocery-value-tracker-v1";
 const XML_DATABASE_URL = "./products.xml";
-const PRODUCT_APIS = [
-  {
-    name: "Open Food Facts",
-    url: (barcode) => `https://world.openfoodfacts.org/api/v3/product/${encodeURIComponent(barcode)}.json`,
-  },
-  {
-    name: "Open Products Facts",
-    url: (barcode) => `https://world.openproductsfacts.org/api/v3/product/${encodeURIComponent(barcode)}.json`,
-  },
-];
 
 const state = loadState();
 let stream = null;
@@ -234,7 +224,7 @@ async function selectBarcode(barcode) {
   const knownProduct = state.products[barcode];
   if (knownProduct) {
     page.setKnownProduct(knownProduct);
-    page.setLookupStatus("Product loaded from your saved products.", "success");
+    page.setLookupStatus("Produto carregado dos seus produtos salvos.", "success");
     updateLowestPrice();
     return;
   }
@@ -244,14 +234,13 @@ async function selectBarcode(barcode) {
 
 async function recognizeProduct(barcode) {
   page.setLookupLoading(true);
-  page.setLookupStatus("Looking up product by barcode...");
+  page.setLookupStatus("Consultando produto no banco XML...");
 
   try {
-    const localProduct = await findProductInXmlDatabase(barcode);
-    const recognized = localProduct || await fetchProductByBarcode(barcode);
+    const recognized = await findProductInXmlDatabase(barcode);
 
     if (!recognized) {
-      page.setLookupStatus("Product not found. You can type the product name manually.", "warning");
+      page.setLookupStatus("Produto não encontrado no XML. Digite o nome manualmente ou cadastre no products.xml.", "warning");
       page.setKnownProduct(null);
       return;
     }
@@ -265,10 +254,10 @@ async function recognizeProduct(barcode) {
       source: recognized.source,
     };
     persist();
-    page.setLookupStatus(`Product recognized with ${recognized.source}.`, "success");
+    page.setLookupStatus(`Produto reconhecido pelo ${recognized.source}.`, "success");
     updateLowestPrice();
   } catch {
-    page.setLookupStatus("Could not reach the product API. You can type the product name manually.", "warning");
+    page.setLookupStatus("Não foi possível ler o products.xml. Verifique se o app está rodando por servidor local/HTTPS.", "warning");
   } finally {
     page.setLookupLoading(false);
   }
@@ -317,51 +306,6 @@ function xmlTextContent(node, selector) {
 
 function parseXmlPrice(value) {
   return Number(String(value).replace(",", ".")) || 0;
-}
-
-async function fetchProductByBarcode(barcode) {
-  for (const api of PRODUCT_APIS) {
-    const response = await fetch(api.url(barcode), {
-      headers: { Accept: "application/json" },
-    });
-
-    if (!response.ok) {
-      continue;
-    }
-
-    const data = await response.json();
-    const product = normalizeApiProduct(data.product);
-    if (product) {
-      return { ...product, source: api.name };
-    }
-  }
-
-  return null;
-}
-
-function normalizeApiProduct(product) {
-  if (!product) {
-    return null;
-  }
-
-  const name = [
-    product.product_name_pt,
-    product.product_name_br,
-    product.product_name,
-    product.product_name_en,
-    product.generic_name,
-    product.abbreviated_product_name,
-  ].find(Boolean);
-
-  if (!name) {
-    return null;
-  }
-
-  return {
-    name,
-    brand: product.brands,
-    quantity: product.quantity,
-  };
 }
 
 function saveItem(event) {
