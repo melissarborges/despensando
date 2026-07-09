@@ -61,64 +61,73 @@
 
           <form id="itemForm" class="item-form" novalidate>
             <input id="editingId" type="hidden" />
-            <label>
+            <label class="product-field span-2">
               Produto
               <input id="productName" placeholder="Arroz, café, leite..." />
             </label>
-            <label>
-              Marca
-              <input id="brandName" placeholder="Nome da marca" />
-            </label>
-            <label>
-              Mercado
-              <input id="storeName" placeholder="Nome do mercado" />
-            </label>
-            <label>
-              Quantidade
-              <input id="quantity" type="number" min="0.01" step="0.01" value="1" />
-            </label>
-            <label>
-              Tipo de preço
-              <select id="pricingMode">
-                <option value="unit">Por unidade</option>
-                <option value="weight">Por peso</option>
-              </select>
-            </label>
-            <label>
-              Unidade
-              <select id="unit">
-                <option value="unit">unidade</option>
-                <option value="kg">kg</option>
-                <option value="g">g</option>
-                <option value="l">l</option>
-                <option value="ml">ml</option>
-                <option value="pack">pacote</option>
-              </select>
-            </label>
-            <label>
-              Preço unitário
-              <input id="unitPrice" type="number" min="0" step="0.01" placeholder="0.00" />
-            </label>
-            <label class="weight-field">
-              Peso
-              <input id="weight" type="number" min="0" step="0.001" placeholder="0.000" />
-            </label>
-            <label class="weight-field">
-              Preço por peso
-              <input id="weightPrice" type="number" min="0" step="0.01" placeholder="0.00" />
-            </label>
-            <label>
-              Preço total
-              <input id="price" type="number" min="0" step="0.01" readonly placeholder="0.00" />
-            </label>
+            <div class="quick-price-row span-2">
+              <label>
+                Quantidade
+                <input id="quantity" type="number" min="0.01" step="0.01" value="1" />
+              </label>
+              <label>
+                Preço unitário
+                <input id="unitPrice" type="number" min="0" step="0.01" placeholder="0.00" />
+              </label>
+            </div>
+
+            <details class="extra-fields span-2">
+              <summary>Mais detalhes</summary>
+              <div class="extra-fields-grid">
+                <label>
+                  Marca
+                  <input id="brandName" placeholder="Nome da marca" />
+                </label>
+                <label>
+                  Mercado
+                  <input id="storeName" placeholder="Nome do mercado" />
+                </label>
+                <label>
+                  Tipo de preço
+                  <select id="pricingMode">
+                    <option value="unit">Por unidade</option>
+                    <option value="weight">Por peso</option>
+                  </select>
+                </label>
+                <label>
+                  Unidade
+                  <select id="unit">
+                    <option value="unit">unidade</option>
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="l">l</option>
+                    <option value="ml">ml</option>
+                    <option value="pack">pacote</option>
+                  </select>
+                </label>
+                <label class="weight-field">
+                  Peso
+                  <input id="weight" type="number" min="0" step="0.001" placeholder="0.000" />
+                </label>
+                <label class="weight-field">
+                  Preço por peso
+                  <input id="weightPrice" type="number" min="0" step="0.01" placeholder="0.00" />
+                </label>
+                <label>
+                  Preço total
+                  <input id="price" type="number" min="0" step="0.01" readonly placeholder="0.00" />
+                </label>
+                <label>
+                  Data
+                  <input id="purchaseDate" type="date" />
+                </label>
+              </div>
+            </details>
+
             <div class="lowest-price-card span-2" id="lowestPriceCard">
               <span>Menor valor já registrado</span>
               <strong id="lowestPriceValue">Sem histórico</strong>
             </div>
-            <label>
-              Data
-              <input id="purchaseDate" type="date" />
-            </label>
             <button class="primary-button span-2" type="submit">Adicione ao carrinho</button>
             <button id="viewCartBtn" class="span-2" type="button">Ver carrinho</button>
           </form>
@@ -132,6 +141,10 @@
           <div>
             <span>Itens</span>
             <strong id="itemCount">0</strong>
+          </div>
+          <div class="available-balance-card" id="availableBalanceCard">
+            <span>Saldo disponível</span>
+            <strong id="availableBalance">Sem orçamento</strong>
           </div>
           <div>
             <span>Comparado à última compra</span>

@@ -272,6 +272,31 @@ video {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.quick-price-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.extra-fields {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.extra-fields summary {
+  cursor: pointer;
+  color: var(--green-dark);
+  font-weight: 800;
+}
+
+.extra-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
 .controls-grid .barcode-field {
   grid-column: 1 / 2;
   width: 100%;
@@ -385,7 +410,7 @@ video {
 
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 18px 0;
 }
@@ -430,11 +455,13 @@ video {
   min-height: 36px;
 }
 
-.budget-card.is-over-budget {
+.budget-card.is-over-budget,
+.available-balance-card.is-over-budget {
   border-left-color: var(--wine);
 }
 
 .budget-card.is-over-budget strong,
+.available-balance-card.is-over-budget strong,
 .summary-strip strong.is-over-budget {
   color: var(--wine);
 }
@@ -588,6 +615,11 @@ video {
 
   .controls-grid,
   .item-form {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-price-row,
+  .extra-fields-grid {
     grid-template-columns: 1fr;
   }
 
