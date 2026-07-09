@@ -1,8 +1,8 @@
 :root {
   color-scheme: light;
-  --wine: #4b1426;
+  --wine: #e03f4f;
   --forest: #17433f;
-  --leaf: #558467;
+  --leaf: #81912f;
   --butter: #f6f7f2;
   --sage-dark: var(--forest);
   --sage: var(--leaf);
@@ -13,7 +13,7 @@
   --ink: var(--sage-dark);
   --muted: var(--leaf);
   --line: var(--linen);
-  --green: var(--sage-dark);
+  --green: var(--leaf);
   --green-dark: var(--sage-dark);
   --yellow: var(--sage);
   --blue: var(--sage-dark);
@@ -385,7 +385,7 @@ video {
 
 .summary-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin: 18px 0;
 }
@@ -413,6 +413,17 @@ video {
 
 .summary-strip .budget-card {
   gap: 8px;
+}
+
+.budget-card {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--green);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  background: var(--surface);
 }
 
 .budget-card input {

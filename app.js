@@ -19,6 +19,7 @@ els.stopScanBtn.addEventListener("click", stopScanner);
 els.barcodePhotoInput.addEventListener("change", scanBarcodePhoto);
 els.lookupBtn.addEventListener("click", () => selectBarcode(els.barcodeInput.value.trim()));
 els.form.addEventListener("submit", saveItem);
+els.viewCartBtn.addEventListener("click", () => switchAppTab("cart"));
 els.finishShoppingBtn.addEventListener("click", finishShopping);
 els.historyFilter.addEventListener("change", render);
 els.historyTab.addEventListener("click", () => switchRecordsTab("history"));
@@ -795,6 +796,7 @@ function GroceryPageObject() {
     barcodePhotoInput: document.querySelector("#barcodePhotoInput"),
     barcodeInput: document.querySelector("#barcodeInput"),
     lookupBtn: document.querySelector("#lookupBtn"),
+    viewCartBtn: document.querySelector("#viewCartBtn"),
     lookupStatus: document.querySelector("#lookupStatus"),
     form: document.querySelector("#itemForm"),
     editingId: document.querySelector("#editingId"),
@@ -875,6 +877,10 @@ function GroceryPageObject() {
   function resetItemForm() {
     elements.form.reset();
     elements.editingId.value = "";
+    elements.barcodeInput.value = "";
+    elements.barcodePhotoInput.value = "";
+    elements.lookupStatus.textContent = "";
+    elements.lookupStatus.dataset.tone = "";
     setProductLocked(false);
     elements.purchaseDate.valueAsDate = new Date();
     elements.quantity.value = "1";
