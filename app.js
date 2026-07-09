@@ -332,7 +332,7 @@ async function saveItem(event) {
   await completeItemFromKnownProduct(item);
 
   if (!isValidItem(item)) {
-    page.setLookupStatus("Informe o produto ou use um código cadastrado no XML.", "warning");
+    page.setLookupStatus(validationMessage(item), "warning");
     return;
   }
 
@@ -396,6 +396,18 @@ function isValidItem(item) {
   }
 
   return item.quantity > 0 && item.unitPrice > 0;
+}
+
+function validationMessage(item) {
+  if (!item.name) {
+    return "Informe o produto ou use um código cadastrado no XML.";
+  }
+
+  if (item.pricingMode === "weight") {
+    return "Informe o peso e o preço por peso.";
+  }
+
+  return "Informe a quantidade e o preço unitário.";
 }
 
 function finishShopping() {
@@ -962,10 +974,6 @@ function GroceryPageObject() {
     });
     elements.quantity.closest("label").hidden = isWeightPricing;
     elements.unitPrice.closest("label").hidden = isWeightPricing;
-    elements.quantity.required = !isWeightPricing;
-    elements.unitPrice.required = !isWeightPricing;
-    elements.weight.required = isWeightPricing;
-    elements.weightPrice.required = isWeightPricing;
     elements.price.value = calculateTotal().toFixed(2);
     if (typeof updateLowestPrice === "function") {
       updateLowestPrice();

@@ -59,7 +59,7 @@
             <p id="lookupStatus" class="lookup-status span-2" role="status" aria-live="polite"></p>
           </div>
 
-          <form id="itemForm" class="item-form">
+          <form id="itemForm" class="item-form" novalidate>
             <input id="editingId" type="hidden" />
             <label>
               Produto
@@ -75,7 +75,7 @@
             </label>
             <label>
               Quantidade
-              <input id="quantity" type="number" min="0.01" step="0.01" value="1" required />
+              <input id="quantity" type="number" min="0.01" step="0.01" value="1" />
             </label>
             <label>
               Tipo de preço
