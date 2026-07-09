@@ -324,13 +324,15 @@ function parseXmlPrice(value) {
   return Number(String(value).replace(",", ".")) || 0;
 }
 
-function saveItem(event) {
+async function saveItem(event) {
   event.preventDefault();
 
   const item = page.readItemForm();
   const barcode = item.barcode;
+  await completeItemFromKnownProduct(item);
 
   if (!isValidItem(item)) {
+    page.setLookupStatus("Informe o produto ou use um código cadastrado no XML.", "warning");
     return;
   }
 
@@ -354,6 +356,34 @@ function saveItem(event) {
   updateLowestPrice();
   persist();
   render();
+}
+
+async function completeItemFromKnownProduct(item) {
+  if (item.name || !item.barcode) {
+    return;
+  }
+
+  const knownProduct = state.products[item.barcode] || await findProductInXmlDatabase(item.barcode);
+  if (!knownProduct) {
+    return;
+  }
+
+  item.name = knownProduct.name || item.name;
+  item.brand = knownProduct.brand || item.brand;
+  item.unit = knownProduct.unit || item.unit;
+  item.pricingMode = knownProduct.pricingMode || item.pricingMode;
+
+  if (knownProduct.price && !item.price) {
+    if (item.pricingMode === "weight") {
+      item.weightPrice = knownProduct.price;
+      item.price = item.weight * item.weightPrice;
+    } else {
+      item.unitPrice = knownProduct.price;
+      item.price = item.quantity * item.unitPrice;
+    }
+  }
+
+  page.fillItemForm(item);
 }
 
 function isValidItem(item) {
