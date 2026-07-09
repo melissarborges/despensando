@@ -79,6 +79,11 @@ label {
   font-weight: 700;
 }
 
+label.is-locked input {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
 .app-shell {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;

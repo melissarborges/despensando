@@ -359,7 +359,7 @@ async function saveItem(event) {
 }
 
 async function completeItemFromKnownProduct(item) {
-  if (item.name || !item.barcode) {
+  if (!item.barcode) {
     return;
   }
 
@@ -383,7 +383,7 @@ async function completeItemFromKnownProduct(item) {
     }
   }
 
-  page.fillItemForm(item);
+  page.fillItemForm(item, { lockProduct: true });
 }
 
 function isValidItem(item) {
@@ -712,7 +712,7 @@ function editItem(id) {
   if (!item) {
     return;
   }
-  page.fillItemForm(item);
+  page.fillItemForm(item, { lockProduct: Boolean(item.barcode) });
   updateLowestPrice();
 }
 
@@ -875,13 +875,14 @@ function GroceryPageObject() {
   function resetItemForm() {
     elements.form.reset();
     elements.editingId.value = "";
+    setProductLocked(false);
     elements.purchaseDate.valueAsDate = new Date();
     elements.quantity.value = "1";
     elements.pricingMode.value = "unit";
     syncPriceFields();
   }
 
-  function fillItemForm(item) {
+  function fillItemForm(item, options = {}) {
     elements.editingId.value = item.id;
     elements.barcodeInput.value = item.barcode || "";
     elements.productName.value = item.name;
@@ -895,8 +896,11 @@ function GroceryPageObject() {
     elements.weightPrice.value = item.weightPrice || "";
     elements.price.value = item.price || calculateTotal();
     elements.purchaseDate.value = item.date || "";
+    setProductLocked(Boolean(options.lockProduct));
     syncPriceFields();
-    elements.productName.focus();
+    if (!elements.productName.readOnly) {
+      elements.productName.focus();
+    }
   }
 
   function setCameraActive(isActive) {
@@ -915,7 +919,7 @@ function GroceryPageObject() {
     elements.brandName.value = knownProduct.brand || "";
     elements.unit.value = knownProduct.unit;
     elements.storeName.value = knownProduct.lastStore || "";
-    elements.productName.focus();
+    setProductLocked(true);
   }
 
   function setRecognizedProduct(product) {
@@ -937,7 +941,12 @@ function GroceryPageObject() {
     }
 
     syncPriceFields();
-    elements.productName.focus();
+    setProductLocked(true);
+  }
+
+  function setProductLocked(isLocked) {
+    elements.productName.readOnly = isLocked;
+    elements.productName.closest("label").classList.toggle("is-locked", isLocked);
   }
 
   function setLookupLoading(isLoading) {
