@@ -1,20 +1,24 @@
 :root {
   color-scheme: light;
-  --sage-dark: #2e4540;
-  --sage: #408175;
-  --linen: #dccfc0;
-  --cream: #fdf6ed;
+  --wine: #4b1426;
+  --forest: #17433f;
+  --leaf: #558467;
+  --butter: #f6f7f2;
+  --sage-dark: var(--forest);
+  --sage: var(--leaf);
+  --linen: var(--butter);
+  --cream: var(--butter);
   --bg: var(--cream);
   --surface: var(--cream);
   --ink: var(--sage-dark);
-  --muted: #408175;
+  --muted: var(--leaf);
   --line: var(--linen);
   --green: var(--sage-dark);
   --green-dark: var(--sage-dark);
   --yellow: var(--sage);
   --blue: var(--sage-dark);
-  --red: var(--sage-dark);
-  --shadow: 0 14px 35px rgba(46, 69, 64, 0.18);
+  --red: var(--wine);
+  --shadow: 0 14px 35px rgba(23, 67, 63, 0.18);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -293,8 +297,8 @@ video {
 }
 
 #stopScanBtn {
-  border-color: #aa1c41;
-  background: #aa1c41;
+  border-color: var(--wine);
+  background: var(--wine);
   color: var(--cream);
 }
 
@@ -344,11 +348,11 @@ video {
 }
 
 .lowest-price-card.is-higher {
-  border-left-color: #aa1c41;
+  border-left-color: var(--wine);
 }
 
 .lowest-price-card.is-higher strong {
-  color: #aa1c41;
+  color: var(--wine);
 }
 
 .lowest-price-card.is-lowest {
@@ -367,7 +371,7 @@ video {
 }
 
 .lookup-status[data-tone="warning"] {
-  color: #aa1c41;
+  color: var(--wine);
 }
 
 [hidden] {
@@ -411,12 +415,12 @@ video {
 }
 
 .budget-card.is-over-budget {
-  border-left-color: #aa1c41;
+  border-left-color: var(--wine);
 }
 
 .budget-card.is-over-budget strong,
 .summary-strip strong.is-over-budget {
-  color: #aa1c41;
+  color: var(--wine);
 }
 
 .workspace {
