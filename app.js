@@ -7,6 +7,7 @@ let scannerTimer = null;
 let scannerControls = null;
 let money = createMoneyFormatter();
 let activeRecordsTab = "history";
+let activeAppTab = "register";
 let xmlProductsCache = null;
 const page = GroceryPageObject();
 const els = page.elements;
@@ -22,6 +23,10 @@ els.finishShoppingBtn.addEventListener("click", finishShopping);
 els.historyFilter.addEventListener("change", render);
 els.historyTab.addEventListener("click", () => switchRecordsTab("history"));
 els.comparisonTab.addEventListener("click", () => switchRecordsTab("comparison"));
+els.registerAppTab.addEventListener("click", () => switchAppTab("register"));
+els.summaryAppTab.addEventListener("click", () => switchAppTab("summary"));
+els.cartAppTab.addEventListener("click", () => switchAppTab("cart"));
+els.recordsAppTab.addEventListener("click", () => switchAppTab("records"));
 els.clearDataBtn.addEventListener("click", clearData);
 els.exportBtn.addEventListener("click", exportData);
 els.importFile.addEventListener("change", importData);
@@ -431,6 +436,40 @@ function render() {
   renderHistory();
   renderComparisons();
   renderRecordsTabs();
+  renderAppTabs();
+}
+
+function switchAppTab(tab) {
+  activeAppTab = tab;
+  renderAppTabs();
+}
+
+function renderAppTabs() {
+  const tabs = {
+    register: {
+      button: els.registerAppTab,
+      panel: els.registerPanel,
+    },
+    summary: {
+      button: els.summaryAppTab,
+      panel: els.summaryPanel,
+    },
+    cart: {
+      button: els.cartAppTab,
+      panel: els.cartPanel,
+    },
+    records: {
+      button: els.recordsAppTab,
+      panel: els.recordsPanelSection,
+    },
+  };
+
+  Object.entries(tabs).forEach(([tab, config]) => {
+    const isActive = activeAppTab === tab;
+    config.button.classList.toggle("is-active", isActive);
+    config.button.setAttribute("aria-selected", String(isActive));
+    config.panel.hidden = !isActive;
+  });
 }
 
 function switchRecordsTab(tab) {
@@ -731,6 +770,14 @@ function GroceryPageObject() {
     lowestPriceValue: document.querySelector("#lowestPriceValue"),
     purchaseDate: document.querySelector("#purchaseDate"),
     currentTotal: document.querySelector("#currentTotal"),
+    registerAppTab: document.querySelector("#registerAppTab"),
+    summaryAppTab: document.querySelector("#summaryAppTab"),
+    cartAppTab: document.querySelector("#cartAppTab"),
+    recordsAppTab: document.querySelector("#recordsAppTab"),
+    registerPanel: document.querySelector("#registerPanel"),
+    summaryPanel: document.querySelector("#summaryPanel"),
+    cartPanel: document.querySelector("#cartPanel"),
+    recordsPanelSection: document.querySelector("#recordsPanelSection"),
     budgetInput: document.querySelector("#budgetInput"),
     budgetCard: document.querySelector("#budgetCard"),
     budgetStatus: document.querySelector("#budgetStatus"),

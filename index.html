@@ -28,7 +28,14 @@
       </header>
 
       <main>
-        <section class="shopping-panel">
+        <nav class="app-tabs" aria-label="Menu principal">
+          <button id="registerAppTab" class="app-tab-button is-active" type="button" aria-controls="registerPanel" aria-selected="true">Cadastro</button>
+          <button id="summaryAppTab" class="app-tab-button" type="button" aria-controls="summaryPanel" aria-selected="false">Resumo</button>
+          <button id="cartAppTab" class="app-tab-button" type="button" aria-controls="cartPanel" aria-selected="false">Carrinho</button>
+          <button id="recordsAppTab" class="app-tab-button" type="button" aria-controls="recordsPanelSection" aria-selected="false">Registros</button>
+        </nav>
+
+        <section id="registerPanel" class="shopping-panel app-tab-panel">
           <div class="scanner">
             <video id="cameraPreview" playsinline muted></video>
             <div class="scanner-placeholder" id="scannerPlaceholder">
@@ -116,7 +123,7 @@
           </form>
         </section>
 
-        <section class="summary-strip" aria-label="Resumo da compra">
+        <section id="summaryPanel" class="summary-strip app-tab-panel" aria-label="Resumo da compra" hidden>
           <div>
             <span>Valor</span>
             <strong id="currentTotal">$0.00</strong>
@@ -138,7 +145,7 @@
           </div>
         </section>
 
-        <section class="workspace">
+        <section id="cartPanel" class="app-tab-panel" hidden>
           <div class="list-panel">
             <div class="section-heading">
               <h2>Compra atual</h2>
@@ -146,7 +153,9 @@
             </div>
             <div id="currentList" class="item-list empty-state"></div>
           </div>
+        </section>
 
+        <section id="recordsPanelSection" class="app-tab-panel" hidden>
           <aside class="records-panel">
             <div class="tabs" role="tablist" aria-label="Registros de compras">
               <button id="historyTab" class="tab-button is-active" type="button" role="tab" aria-controls="historyPanel" aria-selected="true">
