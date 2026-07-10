@@ -354,6 +354,8 @@ async function saveItem(event) {
   }
 
   page.resetItemForm();
+  els.barcodeInput.value = "";
+  els.barcodePhotoInput.value = "";
   updateLowestPrice();
   persist();
   render();
