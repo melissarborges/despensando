@@ -165,6 +165,36 @@ h2 {
   box-shadow: var(--shadow);
 }
 
+.main-balance {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--green);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.main-balance span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.main-balance strong {
+  font-size: 1.35rem;
+}
+
+.main-balance.is-over-budget {
+  border-left-color: var(--wine);
+}
+
+.main-balance.is-over-budget strong {
+  color: var(--wine);
+}
+
 .app-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

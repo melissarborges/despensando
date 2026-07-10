@@ -547,8 +547,12 @@ function renderSummary() {
   els.availableBalance.textContent = budget
     ? budgetStatusText(currentTotal, budget)
     : "Sem orçamento";
+  els.mainAvailableBalance.textContent = budget
+    ? budgetStatusText(currentTotal, budget)
+    : "Sem orçamento";
   els.budgetCard.classList.toggle("is-over-budget", isOverBudget);
   els.availableBalanceCard.classList.toggle("is-over-budget", isOverBudget);
+  els.mainBalanceCard.classList.toggle("is-over-budget", isOverBudget);
   els.currentTotal.classList.toggle("is-over-budget", isOverBudget);
 
   if (!previous || !state.current.length) {
@@ -818,6 +822,8 @@ function GroceryPageObject() {
     lowestPriceValue: document.querySelector("#lowestPriceValue"),
     purchaseDate: document.querySelector("#purchaseDate"),
     currentTotal: document.querySelector("#currentTotal"),
+    mainBalanceCard: document.querySelector("#mainBalanceCard"),
+    mainAvailableBalance: document.querySelector("#mainAvailableBalance"),
     availableBalance: document.querySelector("#availableBalance"),
     availableBalanceCard: document.querySelector("#availableBalanceCard"),
     registerAppTab: document.querySelector("#registerAppTab"),
